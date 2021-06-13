@@ -3,23 +3,22 @@ namespace furkanmeclis;
 /**
  * Router
  * @author Furkan Meclis <gamefurkanmeclis@gmail.com>
- * @method static init()
- * @method static initLanguage($routearray)
- * @method static get($path,$callback, $middleware = false)
- * @method static post($path,$callback, $middleware = false)
- * @method static put($path,$callback, $middleware = false)
- * @method static delete($path,$callback, $middleware = false)
- * @method static setLanguage($lang)
- * @method static getActiveLanguage()
- * @method static setDefaultLanguage()
- * @method static getLink($link)
- * @method static run()
- * @method static error($errorclassname)
- * @method static setGlobalMiddleware($middleware)
- * @method static group($prefix, \Closure $closure, $middleware = false)
- * @method static language($method = 'get', $middleware = false)
- * @method static where($key, $pattern)
- * @method static redirect($from, $to, $status = 301)
+ * @method  init()
+ * @method  initLanguage($routearray)
+ * @method  get($path,$callback, $middleware = false)
+ * @method  post($path,$callback, $middleware = false)
+ * @method  put($path,$callback, $middleware = false)
+ * @method  delete($path,$callback, $middleware = false)
+ * @method  setLanguage($lang)
+ * @method  getActiveLanguage()
+ * @method  setDefaultLanguage()
+ * @method  getLink($link)
+ * @method  run()
+ * @method  error($errorclassname)
+ * @method  setGlobalMiddleware($middleware)
+ * @method  group($prefix, \Closure $closure, $middleware = false)
+ * @method  language($method = 'get', $middleware = false)
+ * @method  where($key, $pattern)
  * @copyright Tüm Hakları Furkan Meclis'e Aittir
  * @Licence: The MIT License (MIT) - Copyright (c) - http://opensource.org/licenses/MIT
  * 
@@ -27,21 +26,30 @@ namespace furkanmeclis;
 class Router
 {
     
-    public static $patterns = [
-        ':id[0-9]?' => '([0-9]+)',
-        ':url[0-9]?' => '([0-9a-zA-Z-_]+)'
+    public  $patterns =  [
+        ':all[0-9]?' => '(.*)',
+        ':any[0-9]?' => '([^/]+)',
+        ':id[0-9]?' => '(\d+)',
+        ':int[0-9]?' => '(\d+)',
+        ':number[0-9]?' => '([+-]?([0-9]*[.])?[0-9]+)',
+        ':float[0-9]?' => '([+-]?([0-9]*[.])?[0-9]+)',
+        ':bool[0-9]?' => '(true|false|1|0)',
+        ':string[0-9]?' => '([\w\-_]+)',
+        ':slug[0-9]?' => '([\w\-_]+)',
+        ':uuid[0-9]?' => '([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})',
+        ':date[0-9]?' => '([0-9]{4}-(0[1-9]|1[0-2])-(0[1-9]|[1-2][0-9]|3[0-1]))',
     ];
-    public static $base_url = '/';
-    public static $hasRoute = false;
-    public static $routes = [];
-    public static $group_middleware = false;
-    public static $prefix = '';
-    public static $default = "";
-    public static $language = '';
-    public static $languageoptiondir = '';
-    public static $namespaces = [];
-    public static $paths = [];
-    public static $error = [];    
+   
+    public  $hasRoute = false;
+    public  $routes = [];
+    public  $group_middleware = false;
+    public  $prefix = '';
+    public  $default = "";
+    public  $language = '';
+    public  $languageoptiondir = '';
+    public  $namespaces = [];
+    public  $paths = [];
+    public  $error = [];    
     /**
      * Sınıfa gerekli olan parametreleri tanımlarsınız
      *
@@ -49,20 +57,19 @@ class Router
      * @param  mixed $autoload Controller ve Middleware için otomatik yükleme methodunu çalıştırır
      * @return void
      */
-    public static function init($settings, $autoload = true)
+    public  function __construct($settings, $autoload = true)
     {
-        self::$base_url = $settings["base_url"];
-        self::$namespaces["controller"] = $settings["namespaces"]["controller"] ;
-        self::$namespaces["middleware"] = $settings["namespaces"]["middleware"] ;
-        self::$paths["controller"] = $settings["paths"]["controller"] ;
-        self::$paths["middleware"] = $settings["paths"]["middleware"] ;
-        self::$error["controller"] = $settings["error"]["controller"];
-        self::$error["method"] = $settings["error"]["method"];
-        self::$languageoptiondir = $settings["language"]["router_file_url"];
-        self::$default = $settings["language"]["default_language"];
-        self::$language = $settings["language"]["default_language"];
+        $this->namespaces["controller"] = $settings["namespaces"]["controller"] ;
+        $this->namespaces["middleware"] = $settings["namespaces"]["middleware"] ;
+        $this->paths["controller"] = $settings["paths"]["controller"] ;
+        $this->paths["middleware"] = $settings["paths"]["middleware"] ;
+        $this->error["controller"] = $settings["error"]["controller"];
+        $this->error["method"] = $settings["error"]["method"];
+        $this->languageoptiondir = $settings["language"]["router_file_url"];
+        $this->default = $settings["language"]["default_language"];
+        $this->language = $settings["language"]["default_language"];
         if ($autoload == true)
-            self::loadFiles();
+            $this->loadFiles();
     }    
     /**
      * initLanguage
@@ -70,11 +77,11 @@ class Router
      * @param  mixed $routearray Dil sisteminde gerekli olan array
      * @return void
      */
-    public static function initLanguage($routearray)
+    public  function initLanguage($routearray)
     {
         $data = json_encode($routearray);
-        file_put_contents(realpath(".") . self::$languageoptiondir, $data);
-        chmod(realpath(".") . self::$languageoptiondir, 0777);
+        file_put_contents(realpath(".") . $this->languageoptiondir, $data);
+        chmod(realpath(".") . $this->languageoptiondir, 0777);
     }    
     /**
      * get
@@ -84,22 +91,22 @@ class Router
      * @param  mixed $middleware Middleware kontrolü
      * @return void
      */
-    public static function get($path, $callback, $middleware = false)
+    public  function get($path, $callback, $middleware = false)
     {
         if ($middleware == false) {
-            if (self::$group_middleware == false) {
+            if ($this->group_middleware == false) {
                 $mid = false;
             } else {
-                $mid = self::$group_middleware;
+                $mid = $this->group_middleware;
             }
         } else {
             $mid = $middleware;
         }
-        self::$routes['get'][self::$prefix . $path] = [
+        $this->routes['get'][$this->prefix . $path] = [
             'callback' => $callback,
             'middleware' => $mid
         ];
-        return new self();
+        return $this;
     }
     /**
      * post
@@ -109,22 +116,22 @@ class Router
      * @param  mixed $middleware Middleware kontrolü
      * @return void
      */
-    public static function post($path, $callback, $middleware = false)
+    public  function post($path, $callback, $middleware = false)
     {
         if ($middleware == false) {
-            if (self::$group_middleware == false) {
+            if ($this->group_middleware == false) {
                 $mid = false;
             } else {
-                $mid = self::$group_middleware;
+                $mid = $this->group_middleware;
             }
         } else {
             $mid = $middleware;
         }
-        self::$routes['post'][self::$prefix . $path] = [
+        $this->routes['post'][$this->prefix . $path] = [
             'callback' => $callback,
             'middleware' => $mid
         ];
-        return new self();
+        return $this;
     }
     /**
      * put
@@ -134,22 +141,22 @@ class Router
      * @param  mixed $middleware Middleware kontrolü
      * @return void
      */
-    public static function put($path, $callback, $middleware = false)
+    public  function put($path, $callback, $middleware = false)
     {
         if ($middleware == false) {
-            if (self::$group_middleware == false) {
+            if ($this->group_middleware == false) {
                 $mid = false;
             } else {
-                $mid = self::$group_middleware;
+                $mid = $this->group_middleware;
             }
         } else {
             $mid = $middleware;
         }
-        self::$routes['put'][self::$prefix . $path] = [
+        $this->routes['put'][$this->prefix . $path] = [
             'callback' => $callback,
             'middleware' => $mid
         ];
-        return new self();
+        return $this;
     }
     /**
      * delete
@@ -159,22 +166,22 @@ class Router
      * @param  mixed $middleware Middleware kontrolü
      * @return void
      */
-    public static function delete($path, $callback, $middleware = false)
+    public  function delete($path, $callback, $middleware = false)
     {
         if ($middleware == false) {
-            if (self::$group_middleware == false) {
+            if ($this->group_middleware == false) {
                 $mid = false;
             } else {
-                $mid = self::$group_middleware;
+                $mid = $this->group_middleware;
             }
         } else {
             $mid = $middleware;
         }
-        self::$routes['delete'][self::$prefix . $path] = [
+        $this->routes['delete'][$this->prefix . $path] = [
             'callback' => $callback,
             'middleware' => $mid
         ];
-        return new self();
+        return $this;
     }    
     /**
      * setLanguage
@@ -182,9 +189,9 @@ class Router
      * @param  mixed $lang Dil kısaltması
      * @return void
      */
-    public static function setLanguage($lang)
+    public  function setLanguage($lang)
     {
-        self::$language = $lang;
+        $this->language = $lang;
 
         setcookie("lang", $lang, time() + (60 * 60 * 24 * 30));
         return true;
@@ -194,15 +201,15 @@ class Router
      *
      * @return void
      */
-    public static function getActiveLanguage()
+    public  function getActiveLanguage()
     {
-        if (self::$language != '') {
-            $lang = self::$language;
+        if ($this->language != '') {
+            $lang = $this->language;
         } elseif (isset($_COOKIE["lang"])) {
             $lang = $_COOKIE["lang"];
         } else {
-            self::setDefaultLanguage();
-            $lang = self::$default;
+            $this->setDefaultLanguage();
+            $lang = $this->default;
         }
 
         return $lang;
@@ -212,10 +219,10 @@ class Router
      *
      * @return void
      */
-    public static function setDefaultLanguage()
+    public  function setDefaultLanguage()
     {
-        self::$language = self::$default;
-        setcookie("lang", self::$default, time() + (60 * 60 * 24 * 30));
+        $this->language = $this->default;
+        setcookie("lang", $this->default, time() + (60 * 60 * 24 * 30));
     }    
     /**
      * getLink
@@ -223,12 +230,12 @@ class Router
      * @param  mixed $link Tanımlanan dil sisteminde eşleşen key
      * @return void
      */
-    public static function getLink($link)
+    public  function getLink($link)
     {
-        $lang = self::getActiveLanguage();
+        $lang = $this->getActiveLanguage();
 
 
-        $dir = realpath(".") . self::$languageoptiondir;
+        $dir = realpath(".") . $this->languageoptiondir;
         if (file_exists($dir)) {
             $data = file_get_contents($dir);
             $data = json_decode($data, true);
@@ -242,31 +249,29 @@ class Router
      *
      * @return void
      */
-    public static function run()
+    public  function run()
     {
-        $url = self::getUrl();
-        $method = self::getMethod();
-        if (!empty(self::$routes) || isset(self::$routes[$method])) {
-            if (isset(self::$routes[$method])) {
+        $url = $this->getUrl();
+        $method = $this->getMethod();
+        if (!empty($this->routes) || isset($this->routes[$method])) {
+            if (isset($this->routes[$method])) {
 
 
-                foreach (self::$routes[$method] as $path => $props) {
+                foreach ($this->routes[$method] as $path => $props) {
 
-                    foreach (self::$patterns as $key => $pattern) {
+                    foreach ($this->patterns as $key => $pattern) {
                         $path = preg_replace('#' . $key . '#', $pattern, $path);
                     }
                     $pattern = '#^' . $path . '$#';
 
                     if (preg_match($pattern, $url, $params)) {
 
-                        self::$hasRoute = true;
+                        $this->hasRoute = true;
                         array_shift($params);
 
-                        if (isset($props['redirect'])) {
-                            header("Location:" . self::$base_url, true, $props['status']);
-                        } else {
+                       
                             if ($props['middleware'] != false) {
-                                $response = self::checkMiddleware($props['middleware']);
+                                $response = $this->checkMiddleware($props['middleware']);
                             } else {
                                 $response = true;
                             }
@@ -282,36 +287,36 @@ class Router
 
                                 [$controllerName, $methodName] = explode('@', $callback);
 
-                                $controllerName = self::$namespaces["controller"] . $controllerName;
+                                $controllerName = $this->namespaces["controller"] . $controllerName;
                                 if (class_exists($controllerName)) {
                                     $controller = new $controllerName();
                                     if (method_exists($controller, $methodName)) {
                                         call_user_func_array([$controller, $methodName], $params);
                                     } else {
-                                        self::$hasRoute = false;
-                                        self::routerError("<b>$methodName</b> Method Not Found");
+                                        $this->hasRoute = false;
+                                        $this->routerError("<b>$methodName</b> Method Not Found");
                                     }
                                 } else {
-                                    self::$hasRoute = false;
-                                    self::routerError("<b>$controllerName</b> Controller Not Found");
+                                    $this->hasRoute = false;
+                                    $this->routerError("<b>$controllerName</b> Controller Not Found");
                                 }
                             }
-                        }
+                        
                     }
                 }
-                self::routerError("Page Not Found", true);
+                $this->routerError("Page Not Found", true);
             }
         } else {
-            self::routerError("No Route Defined", true);
+            $this->routerError("No Route Defined", true);
         }
     }    
-    public static function routerError($text, $displaymethod = false)
+    public  function routerError($text, $displaymethod = false)
     {
-        if (self::$hasRoute === false) {
+        if ($this->hasRoute === false) {
 
             if ($displaymethod == true) {
-                $controllerName = self::$namespaces["controller"] . self::$error["controller"];
-                $methodName = self::$error["method"];
+                $controllerName = $this->namespaces["controller"] . $this->error["controller"];
+                $methodName = $this->error["method"];
                 if (class_exists($controllerName)) {
                     $controller = new $controllerName();
                     if (method_exists($controller, $methodName)) {
@@ -329,15 +334,15 @@ class Router
      * @param  mixed $errorclassname Herhangi bir hatada çalışmasını istediğiniz sınıf ve method
      * @return void
      */
-    public static function error($errorclassname)
+    public  function error($errorclassname)
     {
 
         [$controllerName, $methodName] = explode('@', $errorclassname);
-        $controllerName = self::$namespaces . $controllerName;
+        $controllerName = $this->namespaces . $controllerName;
         if (class_exists($controllerName)) {
             $controller = new $controllerName();
             if (method_exists($controller, $methodName)) {
-                self::$error = [
+                $this->error = [
                     "controller" => $controllerName,
                     "method" => $methodName,
 
@@ -349,31 +354,31 @@ class Router
             echo "<b>$controllerName</b> Controller Not Found";
         }
     }
-    public static function getMethod()
+    public  function getMethod()
     {
         return strtolower($_SERVER['REQUEST_METHOD']);
     }
-    public static function checkMiddleware($middlewareclassname)
+    public  function checkMiddleware($middlewareclassname)
     {
 
-        $namespace = self::$namespaces["middleware"] . $middlewareclassname;
+        $namespace = $this->namespaces["middleware"] . $middlewareclassname;
         $mid = new $namespace();
         return $mid->handle();
     }
-    public static function getUrl()
+    public  function getUrl()
     {
-        return str_replace(self::$base_url, '', $_SERVER['REQUEST_URI']);
+        return isset($_GET["uri"]) ? $_GET["uri"] : '/';
     }
-    public static function loadFiles()
+    public  function loadFiles()
     {
-        $dir = realpath(".") . "/" . self::$paths["controller"];
+        $dir = realpath(".") . "/" . $this->paths["controller"];
         $data = scandir($dir);
         unset($data[0]);
         unset($data[1]);
         foreach ($data as $file => $name) {
             require $dir . "/" . $name;
         }
-        $dir2 = realpath(".") . "/" . self::$paths["middleware"];
+        $dir2 = realpath(".") . "/" . $this->paths["middleware"];
         $data2 = scandir($dir2);
         unset($data2[0]);
         unset($data2[1]);
@@ -387,9 +392,9 @@ class Router
      * @param  mixed $middleware Global middleware sınıf ismi
      * @return void
      */
-    public static function setGlobalMiddleware($middleware)
+    public  function setGlobalMiddleware($middleware)
     {
-        self::$group_middleware = $middleware;
+        $this->group_middleware = $middleware;
     }    
     /**
      * group
@@ -399,20 +404,20 @@ class Router
      * @param  mixed $middleware Çalışmasını istediğiniz middleware
      * @return void
      */
-    public static function group($prefix, \Closure $closure, $middleware = false)
+    public  function group($prefix, \Closure $closure, $middleware = false)
     {
-        self::$prefix = $prefix;
+        $this->prefix = $prefix;
         if ($middleware != null) {
-            self::$group_middleware = $middleware;
+            $this->group_middleware = $middleware;
         }
         $closure();
-        self::$prefix = '';
-        self::$group_middleware = false;
+        $this->prefix = '';
+        $this->group_middleware = false;
     }
-    public static function getJsonData()
+    public  function getJsonData()
     {
-        $lang = self::getActiveLanguage();
-        $dir = realpath(".") . self::$languageoptiondir ;
+        $lang = $this->getActiveLanguage();
+        $dir = realpath(".") . $this->languageoptiondir ;
         $data = file_get_contents($dir);
         $data = json_decode($data, true);
         return isset($data[$lang]) ? $data[$lang] : false;
@@ -424,36 +429,36 @@ class Router
      * @param  mixed $middleware
      * @return void
      */
-    public static function language($method = 'get', $middleware = false)
+    public  function language($method = 'get', $middleware = false)
     {
-        $lang = self::getActiveLanguage();
+        $lang = $this->getActiveLanguage();
         if ($middleware != null) {
-            self::$group_middleware = $middleware;
+            $this->group_middleware = $middleware;
         }
 
-        $lang_datas = self::getJsonData();
+        $lang_datas = $this->getJsonData();
         if ($lang_datas != false) {
 
 
             foreach ($lang_datas as $data => $value) {
                 if (!isset($value[2]) || $value[2] == false) {
-                    if (self::$group_middleware == false) {
+                    if ($this->group_middleware == false) {
                         $mid = false;
                     } else {
-                        $mid = self::$group_middleware;
+                        $mid = $this->group_middleware;
                     }
                 } else {
                     $mid = $value[2];
                 }
-                self::$routes[$method]["/" . $lang . "/" . $value[0]] = [
+                $this->routes[$method]["/" . $lang . "/" . $value[0]] = [
                     'callback' => $value[1],
                     'middleware' => $mid
                 ];
             }
         }
 
-        self::$group_middleware = false;
-        return self::$routes;
+        $this->group_middleware = false;
+        return $this->routes;
     }
         
     /**
@@ -465,21 +470,6 @@ class Router
      */
     public function where($key, $pattern)
     {
-        self::$patterns[':' . $key] = '(' . $pattern . ')';
+        $this->patterns[':' . $key] = '(' . $pattern . ')';
     }    
-    /**
-     * redirect
-     *
-     * @param  mixed $from Url
-     * @param  mixed $to Yönlendirmesini istediğiniz url
-     * @param  mixed $status Status code
-     * @return void
-     */
-    public static function redirect($from, $to, $status = 301)
-    {
-        self::$routes['get'][$from] = [
-            'redirect' => $to,
-            'status' => $status
-        ];
-    }
 }
