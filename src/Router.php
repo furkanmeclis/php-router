@@ -17,7 +17,7 @@ namespace furkanmeclis;
  * @method  error($errorclassname)
  * @method  setGlobalMiddleware($middleware)
  * @method  group($prefix, \Closure $closure, $middleware = false)
- * @method  language($method = 'get', $middleware = false)
+ * @method  language($middleware = false)
  * @method  where($key, $pattern)
  * @copyright Tüm Hakları Furkan Meclis'e Aittir
  * @Licence: The MIT License (MIT) - Copyright (c) - http://opensource.org/licenses/MIT
@@ -438,17 +438,17 @@ class Router
     /**
      * language
      *
-     * @param  mixed $method İstek yöntemi
+    
      * @param  mixed $middleware
      * @return void
      */
-    public  function language($method = 'get', $middleware = false)
+    public  function language($middleware = false)
     {
         $lang = $this->getActiveLanguage();
         if ($middleware != null) {
             $this->group_middleware = $middleware;
         }
-
+        $method = 'get';
         $lang_datas = $this->getJsonData();
         if ($lang_datas != false) {
 

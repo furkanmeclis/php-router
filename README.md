@@ -59,11 +59,11 @@ Php İçin Dil Destekli Yönlendirme Sınıfı.
         echo "Welcome Home Page";
     });
 
-    $router->group('/api',function(){
+    $router->group('/api',function($r){
 
-        $router->get('/home','ApiController@Home');
+        $r->get('/home','ApiController@Home');
 
-        $router->post('/user/:id','ApiController@getUser');
+        $rr->post('/user/:id','ApiController@getUser');
 
     },'TestMiddleware');
 
@@ -81,3 +81,5 @@ Php İçin Dil Destekli Yönlendirme Sınıfı.
 
 ?>
 ```
+## Dökümantasyon
+Dökümantasyon sayfasına [burdan](https://github.com/furkanmeclis/php-router/wiki) ulaşabilirsiniz.
