@@ -14,5 +14,9 @@
             "email": "gamefurkanmeclis@gmail.com"
         }
     ],
-    "require": {}
+    "require": {
+        "php": ">=7.2.5"
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true
 }
