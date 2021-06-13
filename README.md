@@ -38,7 +38,7 @@ Php İçin Dil Destekli Yönlendirme Sınıfı.
   RewriteEngine On
   RewriteCond %{REQUEST_FILENAME} !-f
   RewriteCond %{REQUEST_FILENAME} !-d
-  RewriteRule ^(.*)$ index.php?uri=$1 [L]
+  RewriteRule ^(.*)$ index.php?uri=/$1 [L]
 ```
 
 index.php
