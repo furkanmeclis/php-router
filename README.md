@@ -33,6 +33,15 @@ Php İçin Dil Destekli Yönlendirme Sınıfı.
      `src/Router.php` Dosyasını indirerek projenize dahil edebilirsiniz.
 
 ### Örnek Kullanım
+.htaccess 
+```htaccess
+  RewriteEngine On
+  RewriteCond %{REQUEST_FILENAME} !-f
+  RewriteCond %{REQUEST_FILENAME} !-d
+  RewriteRule ^(.*)$ index.php?uri=$1 [L]
+```
+
+index.php
 ```php
 <?php
     require './vendor/autoload.php';
