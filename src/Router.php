@@ -50,6 +50,7 @@ class Router
     public  $namespaces = [];
     public  $paths = [];
     public  $error = [];    
+    public  $global_middleware = false;
     /**
      * Sınıfa gerekli olan parametreleri tanımlarsınız
      *
@@ -253,61 +254,68 @@ class Router
     {
         $url = $this->getUrl();
         $method = $this->getMethod();
-        if (!empty($this->routes) || isset($this->routes[$method])) {
-            if (isset($this->routes[$method])) {
-
-
-                foreach ($this->routes[$method] as $path => $props) {
-
-                    foreach ($this->patterns as $key => $pattern) {
-                        $path = preg_replace('#' . $key . '#', $pattern, $path);
-                    }
-                    $pattern = '#^' . $path . '$#';
-
-                    if (preg_match($pattern, $url, $params)) {
-
-                        $this->hasRoute = true;
-                        array_shift($params);
-
-                       
-                            if ($props['middleware'] != false) {
-                                $response = $this->checkMiddleware($props['middleware']);
-                            } else {
-                                $response = true;
-                            }
-
-                            if ($response == false) {
-                                exit;
-                            }
-                            $callback = $props['callback'];
-
-                            if (is_callable($callback)) {
-                                call_user_func_array($callback, $params);
-                            } elseif (is_string($callback)) {
-
-                                [$controllerName, $methodName] = explode('@', $callback);
-
-                                $controllerName = $this->namespaces["controller"] . $controllerName;
-                                if (class_exists($controllerName)) {
-                                    $controller = new $controllerName();
-                                    if (method_exists($controller, $methodName)) {
-                                        call_user_func_array([$controller, $methodName], $params);
+        $glabal_middleware = $this->global_middleware;
+        $mide = true;
+        if($glabal_middleware != false){
+            $mide = $this->checkMiddleware($glabal_middleware);
+        }
+        if($mide == true){
+            if (!empty($this->routes) || isset($this->routes[$method])) {
+                if (isset($this->routes[$method])) {
+    
+    
+                    foreach ($this->routes[$method] as $path => $props) {
+    
+                        foreach ($this->patterns as $key => $pattern) {
+                            $path = preg_replace('#' . $key . '#', $pattern, $path);
+                        }
+                        $pattern = '#^' . $path . '$#';
+    
+                        if (preg_match($pattern, $url, $params)) {
+    
+                            $this->hasRoute = true;
+                            array_shift($params);
+    
+                           
+                                if ($props['middleware'] != false) {
+                                    $response = $this->checkMiddleware($props['middleware']);
+                                } else {
+                                    $response = true;
+                                }
+    
+                                if ($response == false) {
+                                    exit;
+                                }
+                                $callback = $props['callback'];
+    
+                                if (is_callable($callback)) {
+                                    call_user_func_array($callback, $params);
+                                } elseif (is_string($callback)) {
+    
+                                    [$controllerName, $methodName] = explode('@', $callback);
+    
+                                    $controllerName = $this->namespaces["controller"] . $controllerName;
+                                    if (class_exists($controllerName)) {
+                                        $controller = new $controllerName();
+                                        if (method_exists($controller, $methodName)) {
+                                            call_user_func_array([$controller, $methodName], $params);
+                                        } else {
+                                            $this->hasRoute = false;
+                                            $this->routerError("<b>$methodName</b> Method Not Found");
+                                        }
                                     } else {
                                         $this->hasRoute = false;
-                                        $this->routerError("<b>$methodName</b> Method Not Found");
+                                        $this->routerError("<b>$controllerName</b> Controller Not Found");
                                     }
-                                } else {
-                                    $this->hasRoute = false;
-                                    $this->routerError("<b>$controllerName</b> Controller Not Found");
                                 }
-                            }
-                        
+                            
+                        }
                     }
+                    $this->routerError("Page Not Found", true);
                 }
-                $this->routerError("Page Not Found", true);
+            } else {
+                $this->routerError("No Route Defined", true);
             }
-        } else {
-            $this->routerError("No Route Defined", true);
         }
     }    
     public  function routerError($text, $displaymethod = false)
@@ -394,7 +402,7 @@ class Router
      */
     public  function setGlobalMiddleware($middleware)
     {
-        $this->group_middleware = $middleware;
+        $this->global_middleware = $middleware;
     }    
     /**
      * group

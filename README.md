@@ -81,3 +81,24 @@ Php İçin Dil Destekli Yönlendirme Sınıfı.
 
 ?>
 ```
+
+## Nasıl Kullanılır ?
+- index.php
+    ```php
+    $router->get('/home',function(){ echo "/home"; },'TestAuth');
+    ```
+- App/Middleware/TestMiddleware.php
+    ```php
+    <?php
+    namespace App\Middleware;
+    class TestAuth{
+        public function handle(){
+            if(isset($_SESSION['login']) || $_SESSION['login'] == true){
+                return true;
+            }else{
+                return false;
+            }
+        }
+    }
+    ?>
+    ```
