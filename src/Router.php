@@ -64,8 +64,6 @@ class Router
         $this->namespaces["middleware"] = $settings["namespaces"]["middleware"] ;
         $this->paths["controller"] = $settings["paths"]["controller"] ;
         $this->paths["middleware"] = $settings["paths"]["middleware"] ;
-        $this->error["controller"] = $settings["error"]["controller"];
-        $this->error["method"] = $settings["error"]["method"];
         $this->languageoptiondir = $settings["language"]["router_file_url"];
         $this->default = $settings["language"]["default_language"];
         $this->language = $settings["language"]["default_language"];
@@ -322,7 +320,7 @@ class Router
     {
         if ($this->hasRoute === false) {
 
-            if ($displaymethod == true) {
+            if (!empty($this->error)) {
                 $controllerName = $this->namespaces["controller"] . $this->error["controller"];
                 $methodName = $this->error["method"];
                 if (class_exists($controllerName)) {
@@ -330,11 +328,14 @@ class Router
                     if (method_exists($controller, $methodName)) {
                         call_user_func_array([$controller, $methodName], ["1" => $text]);
                     }
+                }else{
+                    echo "tets";
                 }
             } else {
                 die($text);
             }
         }
+       
     }    
     /**
      * error
@@ -345,13 +346,15 @@ class Router
     public  function error($errorclassname)
     {
 
-        [$controllerName, $methodName] = explode('@', $errorclassname);
-        $controllerName = $this->namespaces . $controllerName;
+        $c = explode('@', $errorclassname);
+       
+        $methodName = $c[1];
+        $controllerName = $this->namespaces["controller"] . $c[0];
         if (class_exists($controllerName)) {
             $controller = new $controllerName();
             if (method_exists($controller, $methodName)) {
                 $this->error = [
-                    "controller" => $controllerName,
+                    "controller" => $c[0],
                     "method" => $methodName,
 
                 ];
@@ -412,13 +415,15 @@ class Router
      * @param  mixed $middleware Çalışmasını istediğiniz middleware
      * @return void
      */
-    public  function group($prefix, \Closure $closure, $middleware = false)
+    public  function group($prefix, \Closure $callback, $middleware = false)
     {
         $this->prefix = $prefix;
         if ($middleware != null) {
             $this->group_middleware = $middleware;
         }
-        $closure();
+        if (is_object($callback)) {
+            call_user_func_array($callback, [$this]);
+        }
         $this->prefix = '';
         $this->group_middleware = false;
     }
