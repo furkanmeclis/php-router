@@ -78,6 +78,7 @@ Php İçin Dil Destekli Yönlendirme Sınıfı.
         ]
     ]);
     $router->language();
+    $router->run();
 
 ?>
 ```
