@@ -30,7 +30,7 @@ Php İçin Dil Destekli Yönlendirme Sınıfı.
     ```
 - Manuel Olarak yükleme
 
-    > `src/Router.php` Dosyasını indirerek projenize dahil edebilirsiniz.
+     `src/Router.php` Dosyasını indirerek projenize dahil edebilirsiniz.
 
 ### Örnek Kullanım
 ```php
@@ -54,7 +54,7 @@ Php İçin Dil Destekli Yönlendirme Sınıfı.
             "router_file_url" => "/router.json"
         ]
     ]);
-    
+
     $router->get('/',function(){
         echo "Welcome Home Page";
     });
