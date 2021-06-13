@@ -1,37 +1,86 @@
-## Welcome to GitHub Pages
-
-You can use the [editor on GitHub](https://github.com/furkanmeclis/php-router/edit/gh-pages/index.md) to maintain and preview the content for your website in Markdown files.
-
-Whenever you commit to this repository, GitHub Pages will run [Jekyll](https://jekyllrb.com/) to rebuild the pages in your site, from the content in your Markdown files.
-
-### Markdown
-
-Markdown is a lightweight and easy-to-use syntax for styling your writing. It includes conventions for
-
-```markdown
-Syntax highlighted code block
-
-# Header 1
-## Header 2
-### Header 3
-
-- Bulleted
-- List
-
-1. Numbered
-2. List
-
-**Bold** and _Italic_ and `Code` text
-
-[Link](url) and ![Image](src)
+# furkanmeclis/php-router
+[![Latest Stable Version](http://poser.pugx.org/furkanmeclis/router/v)](https://packagist.org/packages/furkanmeclis/router) [![Total Downloads](http://poser.pugx.org/furkanmeclis/router/downloads)](https://packagist.org/packages/furkanmeclis/router) [![Latest Unstable Version](http://poser.pugx.org/furkanmeclis/router/v/unstable)](https://packagist.org/packages/furkanmeclis/router) [![License](http://poser.pugx.org/furkanmeclis/router/license)](https://packagist.org/packages/furkanmeclis/router)
 ```
+  _____  _    _ _____             _____             _            
+ |  __ \| |  | |  __ \           |  __ \           | |           
+ | |__) | |__| | |__) |  ______  | |__) |___  _   _| |_ ___ _ __
+ |  ___/|  __  |  ___/  |______| |  _  // _ \| | | | __/ _ \ '__|
+ | |    | |  | | |               | | \ \ (_) | |_| | ||  __/ |   
+ |_|    |_|  |_|_|               |_|  \_\___/ \__,_|\__\___|_|   
 
-For more details see [GitHub Flavored Markdown](https://guides.github.com/features/mastering-markdown/).
+```
+Php İçin Dil Destekli Yönlendirme Sınıfı.
 
-### Jekyll Themes
+### Özellikler
+- GET,POST,PUT ve DELETE istek metotları destekleniyor.
+- Controller dosyaları destekleniyor.
+- Middleware kontrolü yapılabiliyor.
+- Özelleştirilmiş parametreler destekleniyor.
+- Yeni doğrulama deseni eklenebiliyor.
+- Namespace desteği mevcut.
+- Gruplama özelliği mevcut.
+- Dil desteği mevcut.
+- Özelleştirilmiş hata sayfaları.
 
-Your Pages site will use the layout and styles from the Jekyll theme you have selected in your [repository settings](https://github.com/furkanmeclis/php-router/settings/pages). The name of this theme is saved in the Jekyll `_config.yml` configuration file.
+### Yükleme
+- Composer İle Yükleme
 
-### Support or Contact
+    ```bash
+    composer require furkanmeclis/router
+    ```
+- Manuel Olarak yükleme
 
-Having trouble with Pages? Check out our [documentation](https://docs.github.com/categories/github-pages-basics/) or [contact support](https://support.github.com/contact) and we’ll help you sort it out.
+     `src/Router.php` Dosyasını indirerek projenize dahil edebilirsiniz.
+
+### Örnek Kullanım
+```php
+<?php
+    require './vendor/autoload.php';
+    $router = new furkanmeclis\Router([
+        "namespaces" => [
+            "controller" => 'App\Controller\\',
+            "middleware" => 'App\Middleware\\'
+        ],
+        "paths" => [
+        "controller" => 'App/Controller/',
+        "middleware" => 'App/Middleware/'
+        ],
+        "error" => [
+            "controller" => "Home",
+            "method" => "error"
+        ],
+        "language" => [
+            "default_language" => "tr",
+            "router_file_url" => "/router.json"
+        ]
+    ]);
+
+    $router->get('/',function(){
+        echo "Welcome Home Page";
+    });
+
+    $router->group('/api',function($r){
+
+        $r->get('/home','ApiController@Home');
+
+        $rr->post('/user/:id','ApiController@getUser');
+
+    },'TestMiddleware');
+
+    $router->initLanguage([
+        "tr" => [
+            "home" => ["anasayfa","Homecontroller@home"],
+            "contact" =>["iletisim","Homecontroller@contact"]
+        ],
+        "en" => [
+            "home" => ["home","Homecontroller@home"],
+            "contact" =>["contact","Homecontroller@contact"]
+        ]
+    ]);
+    $router->language();
+    $router->run();
+
+?>
+```
+## Dökümantasyon
+Dökümantasyon sayfasına [burdan](https://github.com/furkanmeclis/php-router/wiki) ulaşabilirsiniz.
