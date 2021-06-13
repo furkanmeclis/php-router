@@ -54,13 +54,19 @@ Php İçin Dil Destekli Yönlendirme Sınıfı.
             "router_file_url" => "/router.json"
         ]
     ]);
+    
     $router->get('/',function(){
         echo "Welcome Home Page";
     });
+
     $router->group('/api',function(){
+
         $router->get('/home','ApiController@Home');
+
         $router->post('/user/:id','ApiController@getUser');
+
     },'TestMiddleware');
+
     $router->initLanguage([
         "tr" => [
             "home" => ["anasayfa","Homecontroller@home"],
@@ -71,6 +77,7 @@ Php İçin Dil Destekli Yönlendirme Sınıfı.
             "contact" =>["contact","Homecontroller@contact"]
         ]
     ]);
-    
+    $router->language();
+
 ?>
 ```
