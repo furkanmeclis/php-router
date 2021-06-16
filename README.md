@@ -33,63 +33,63 @@ Php İçin Dil Destekli Yönlendirme Sınıfı.
      `src/Router.php` Dosyasını indirerek projenize dahil edebilirsiniz.
 
 ### Örnek Kullanım
-.htaccess 
-```htaccess
-  RewriteEngine On
-  RewriteCond %{REQUEST_FILENAME} !-f
-  RewriteCond %{REQUEST_FILENAME} !-d
-  RewriteRule ^(.*)$ index.php?uri=/$1 [L]
-```
+1. .htaccess 
+  ```htaccess
+    RewriteEngine On
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteRule ^(.*)$ index.php?uri=/$1 [L]
+  ```
 
-index.php
-```php
-<?php
-    require './vendor/autoload.php';
-    $router = new furkanmeclis\Router([
-        "namespaces" => [
-            "controller" => 'App\Controller\\',
-            "middleware" => 'App\Middleware\\'
-        ],
-        "paths" => [
-        "controller" => 'App/Controller/',
-        "middleware" => 'App/Middleware/'
-        ],
-        "error" => [
-            "controller" => "Home",
-            "method" => "error"
-        ],
-        "language" => [
-            "default_language" => "tr",
-            "router_file_url" => "/router.json"
-        ]
-    ]);
+2. index.php
+  ```php
+  <?php
+      require './vendor/autoload.php';
+      $router = new furkanmeclis\Router([
+          "namespaces" => [
+              "controller" => 'App\Controller\\',
+              "middleware" => 'App\Middleware\\'
+          ],
+          "paths" => [
+          "controller" => 'App/Controller/',
+          "middleware" => 'App/Middleware/'
+          ],
+          "error" => [
+              "controller" => "Home",
+              "method" => "error"
+          ],
+          "language" => [
+              "default_language" => "tr",
+              "router_file_url" => "/router.json"
+          ]
+      ]);
 
-    $router->get('/',function(){
-        echo "Welcome Home Page";
-    });
+      $router->get('/',function(){
+          echo "Welcome Home Page";
+      });
 
-    $router->group('/api',function($r){
+      $router->group('/api',function($r){
 
-        $r->get('/home','ApiController@Home');
+          $r->get('/home','ApiController@Home');
 
-        $rr->post('/user/:id','ApiController@getUser');
+          $rr->post('/user/:id','ApiController@getUser');
 
-    },'TestMiddleware');
+      },'TestMiddleware');
 
-    $router->initLanguage([
-        "tr" => [
-            "home" => ["anasayfa","Homecontroller@home"],
-            "contact" =>["iletisim","Homecontroller@contact"]
-        ],
-        "en" => [
-            "home" => ["home","Homecontroller@home"],
-            "contact" =>["contact","Homecontroller@contact"]
-        ]
-    ]);
-    $router->language();
-    $router->run();
+      $router->initLanguage([
+          "tr" => [
+              "home" => ["anasayfa","Homecontroller@home"],
+              "contact" =>["iletisim","Homecontroller@contact"]
+          ],
+          "en" => [
+              "home" => ["home","Homecontroller@home"],
+              "contact" =>["contact","Homecontroller@contact"]
+          ]
+      ]);
+      $router->language();
+      $router->run();
 
-?>
-```
+  ?>
+  ```
 ## Dökümantasyon
 Dökümantasyon sayfasına [burdan](https://github.com/furkanmeclis/php-router/wiki) ulaşabilirsiniz.
