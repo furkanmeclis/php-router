@@ -92,4 +92,4 @@ Php İçin Dil Destekli Yönlendirme Sınıfı.
   ?>
   ```
 ## Dökümantasyon
-Dökümantasyon sayfasına [burdan](https://github.com/furkanmeclis/php-router/wiki) ulaşabilirsiniz.
+Dökümantasyon sayfasına [burdan](https://github.com/furkanmeclis/php-router/wiki) veya [documentation.pdf](documentation.pdf) dosyasını indirerek ulaşabilirsiniz.
